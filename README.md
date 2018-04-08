@@ -26,5 +26,8 @@ Connect the display
   GND   - GND
 ```
 
-Similar project on an Arduino: https://github.com/satr/arduino-with-co2-sensor-mh-z19b-and-lcd-display-nokia-5110
+[Similar project on an Arduino](https://github.com/satr/arduino-with-co2-sensor-mh-z19b-and-lcd-display-nokia-5110).
 
+Basic setup:
+
+![](docs/images/esp32-with-co2-sensor-mh-z19b-and-graph.jpg)
