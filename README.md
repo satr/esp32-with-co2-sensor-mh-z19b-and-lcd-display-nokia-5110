@@ -32,3 +32,6 @@ The project uses the display library [U8g2](https://github.com/olikraus/U8g2_Ard
 Basic setup:
 
 ![](docs/images/esp32-with-co2-sensor-mh-z19b-and-graph.jpg)
+
+Serial interface log - demonstration of a deep sleep mode ([sketch with sleep state](esp32-mh-z19b-lcd-5110-with-deep-sleep-sketch/esp32-mh-z19b-lcd-5110-with-deep-sleep-sketch.ino))
+![](docs/images/esp32-with-co2-sensor-mh-z19b-and-graph-and-sleep.jpg)
