@@ -25,8 +25,9 @@ Connect the display
   5V    - VCC
   GND   - GND
 ```
+The project uses the display library [U8g2](https://github.com/olikraus/U8g2_Arduino)([download](https://github.com/olikraus/U8g2_Arduino/archive/master.zip)), which supports large number of [display types](https://github.com/olikraus/u8g2/wiki/u8g2setupcpp) (set in the code a selected display from [this list](https://github.com/olikraus/u8g2/blob/master/tools/inoupdate/frame_buffer.ino)).
 
-[Similar project on an Arduino](https://github.com/satr/arduino-with-co2-sensor-mh-z19b-and-lcd-display-nokia-5110).
+[Similar project on an Arduino](https://github.com/satr/arduino-with-co2-sensor-mh-z19b-and-lcd-display-nokia-5110). This project uses [Adafruit GFX Library](https://github.com/adafruit/Adafruit-GFX-Library) and [Adafruit PCD8544 Nokia 5110 LCD library](https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library).
 
 Basic setup:
 
