@@ -120,6 +120,18 @@ const byte MSG_INITIALIZING = 8;
 byte currentMessageId = 0;
 unsigned int currentCo2Value = 0;
 
+//timer
+volatile int timerInterruptCount = 0;
+hw_timer_t * timer = NULL;
+portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
+#define CPU_CLOCK_MHz 80 //Specify the CPU clock (in MHz)
+#define TIMER_DURATION_MICROSEC 2000000 //timeout between reads (in microseconds)
+
+void IRAM_ATTR onTimer() {
+  portENTER_CRITICAL_ISR(&timerMux);
+  timerInterruptCount++;
+  portEXIT_CRITICAL_ISR(&timerMux);
+}
 
 void setup() {
   currentCo2Value = 0;
@@ -139,12 +151,31 @@ void setup() {
   delay(5000);//Give some time to the sensor for starting-up
   co2SensorSerial.begin(9600, SERIAL_8N1, 16, 17); //RX, TX - communication between ESP32 and MH-Z19
   Serial.println(" complete");
+
+  Serial.println("INitialize timers.");
+  timer = timerBegin(0, CPU_CLOCK_MHz, true);
+  timerAttachInterrupt(timer, &onTimer, true);
+  timerAlarmWrite(timer, TIMER_DURATION_MICROSEC, true);
+  timerAlarmEnable(timer);
   Serial.println("Initialization complete.");
 }
 
 
 void loop() 
 {
+  processDataReadAndDisplayIfRequested();
+}
+
+
+void processDataReadAndDisplayIfRequested() {
+  if(timerInterruptCount <= 0) {
+    return;
+  }
+
+  portENTER_CRITICAL(&timerMux);
+  timerInterruptCount = 0; //or decrease on 1 - to process readings as a queued requests
+  portEXIT_CRITICAL(&timerMux);
+
   readCo2SensorValueToCo2Response();
   
   if(validateCo2Response()) {
@@ -156,9 +187,7 @@ void loop()
   invalidateDisplay();
   
   printRespond();
-  delay(2000);//timeout between reads (in milliseconds)
 }
-
 
 void initGraphStructures() {
   for(byte i = 0; i < GRAPH_WIDTH; i++) {
@@ -301,3 +330,5 @@ void initDisplay() {
   display.setPowerSave(0); ///Not sure yet
   displayHeight = DISPLAY_HEIGHT;// quick-fix - it shoul be set from display.height();
 }
+
+
