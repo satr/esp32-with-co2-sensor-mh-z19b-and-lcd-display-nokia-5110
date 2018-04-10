@@ -12,6 +12,12 @@ Graph displays a change of the CO2 level on time.
   GND          - GND
   +5V          - Vin
 
+  ESP32  | Temperature and humidity sensor DHT-11
+  +3.3V  - 1 (left, down - from the side of the grid)
+  pin 21 - 2
+  - (NC) - 3
+  GND    - 4
+
   ESP32  | Display Nokia 5110
   pin 14 - Serial clock out: CLK (SCLK)
   pin 13 - Serial data out: DIN
@@ -29,6 +35,7 @@ Graph displays a change of the CO2 level on time.
 */
 
 #include <HardwareSerial.h>
+#include <dht.h> //Used this library (download, zip, install to Arduino): https://github.com/RobTillaart/Arduino/tree/master/libraries/DHTstable
 
 #include <Arduino.h>
 #include <U8g2lib.h>
@@ -119,13 +126,21 @@ const byte MSG_INITIALIZING = 8;
 //Current state
 byte currentMessageId = 0;
 unsigned int currentCo2Value = 0;
-
+int currentTempValue = 0;
+int currHumidityValue = 0;
+    
 //timer
 volatile int timerInterruptCount = 0;
 hw_timer_t * timer = NULL;
 portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
 #define CPU_CLOCK_MHz 80 //Specify the CPU clock (in MHz)
 #define TIMER_DURATION_MICROSEC 2000000 //timeout between reads (in microseconds)
+
+//Temperature and humidity sensor DH-11 (or DH-22)
+dht DHT;
+
+#define DHT11_PIN 21
+
 
 void IRAM_ATTR onTimer() {
   portENTER_CRITICAL_ISR(&timerMux);
@@ -183,10 +198,35 @@ void processDataReadAndDisplayIfRequested() {
   } else {
     currentMessageId = MSG_SENSOR_ERROR;
   }
+
+  readTemperatureAndHumidity();
   
   invalidateDisplay();
   
   printRespond();
+}
+
+void readTemperatureAndHumidity() {
+  Serial.print("Read DHT11..");
+  int result = DHT.read11(DHT11_PIN);
+  switch (result)
+  {
+    case DHTLIB_OK:  
+    Serial.print("OK."); 
+    currentTempValue = DHT.temperature;
+    currHumidityValue = DHT.humidity;
+    break;
+    case DHTLIB_ERROR_CHECKSUM: 
+    Serial.print("DHT checksum error"); 
+    break;
+    case DHTLIB_ERROR_TIMEOUT: 
+    Serial.print("DHT timeout errort"); 
+    break;
+    default: 
+    Serial.print("DHT unknown error"); 
+    break;
+  }
+  Serial.println("H:" + String(currHumidityValue) + "; T:" + String(currentTempValue) + "°C");
 }
 
 void initGraphStructures() {
@@ -287,11 +327,22 @@ void setFont() {
 }
 
 void drawCo2Value() {
-  String co2StatusText = "CO2 " + String(currentCo2Value) + " ppm";
+  String co2StatusText = " CO2 " + String(currentCo2Value) + " ppm";
   char co2ValueBuff[sizeof(co2StatusText) + 1];
   String(co2StatusText).toCharArray(co2ValueBuff, sizeof(co2ValueBuff));
   display.drawStr(0, 0, co2ValueBuff);
 }
+
+void drawTempValue() {
+  String text = "Temp " + String(currentTempValue) + " C";
+  char textBuff[sizeof(text) + 1];
+  String(text).toCharArray(textBuff, sizeof(textBuff));
+  display.drawStr(0, 10, textBuff);
+}
+
+void drawHumidValue() {
+  //TODO
+  }
 
 void drawMessage() {
   char msgBuff[sizeof(messages[currentMessageId]) + 1];
@@ -315,7 +366,9 @@ void drawGraph() {
 void draw() {
   setFont();
   drawCo2Value();  
-  drawMessage();
+  drawTempValue();  
+  drawHumidValue();  
+ // drawMessage();
   drawGraph();
 }
 
