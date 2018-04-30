@@ -7,8 +7,8 @@ Data are read from the sensor's serial port.
 Graph displays a change of the CO2 level on time.
 
   ESP32        | CO2 sensor MH-Z19B
-  pin 16 (RX2) - RX
-  pin 17 (TX2) - TX
+  pin 16 (RX2) - TX
+  pin 17 (TX2) - RX
   GND          - GND
   +5V          - Vin
 
@@ -57,6 +57,7 @@ HardwareSerial co2SensorSerial(1); // Serial #1
 
 // CO2 sensor data structures:
 byte cmd[9] = {0xFF,0x01,0x86,0x00,0x00,0x00,0x00,0x00,0x79}; 
+
 /* --- Request (9 bytes) --- 
  *  0xFF - Start byte
  *  0x01 - Sensor #1
@@ -173,6 +174,10 @@ void setup() {
   timerAlarmWrite(timer, TIMER_DURATION_MICROSEC, true);
   timerAlarmEnable(timer);
   Serial.println("Initialization complete.");
+
+  byte cmd2[1] = {0x8d }; 
+  co2SensorSerial.write(cmd2, 1);
+
 }
 
 

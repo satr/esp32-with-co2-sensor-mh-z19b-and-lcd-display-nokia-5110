@@ -12,8 +12,8 @@ TIMER_DURATION_SEC              - Timeout between reads (in seconds)
 AMOUNT_OF_READINGS_BEFORE_SLEEP - How many readings from the sensor to perform before going to sleep
 
   ESP32        | CO2 sensor MH-Z19B
-  pin 16 (RX2) - RX
-  pin 17 (TX2) - TX
+  pin 16 (RX2) - TX
+  pin 17 (TX2) - RX
   GND          - GND
   +5V          - Vin
 
