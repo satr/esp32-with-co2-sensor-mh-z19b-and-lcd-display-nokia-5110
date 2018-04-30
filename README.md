@@ -14,6 +14,14 @@ Connect the sensor, when data are read from the sensor's serial port.
   GND          - GND
   +5V          - Vin
 ```
+Temperature and humidity sensor DHT-11
+```
+ESP32  | Temperature and humidity sensor DHT-11
+  +3.3V  - 1 (see an image below)
+  pin 21 - 2
+  (NC)   - 3
+  GND    - 4
+```  
 Connect the display
 ```
   ESP32  | Display Nokia 5110
@@ -28,6 +36,10 @@ Connect the display
 The project uses the display library [U8g2](https://github.com/olikraus/U8g2_Arduino)([download](https://github.com/olikraus/U8g2_Arduino/archive/master.zip)), which supports large number of [display types](https://github.com/olikraus/u8g2/wiki/u8g2setupcpp) (set in the code a selected display from [this list](https://github.com/olikraus/u8g2/blob/master/tools/inoupdate/frame_buffer.ino)).
 
 [Similar project on an Arduino](https://github.com/satr/arduino-with-co2-sensor-mh-z19b-and-lcd-display-nokia-5110). This project uses [Adafruit GFX Library](https://github.com/adafruit/Adafruit-GFX-Library) and [Adafruit PCD8544 Nokia 5110 LCD library](https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library).
+
+For support of the temperature and humidity sensor DHT-11 - it is used a library  https://github.com/RobTillaart/Arduino/tree/master/libraries/DHTstable (download, zip, install to Arduino)
+
+![](docs/images/sensor-DHT-11.jpg)
 
 Basic setup:
 
